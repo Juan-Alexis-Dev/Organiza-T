@@ -13,9 +13,7 @@ class HomeScreen extends StatelessWidget {
     final nombre = context.watch<SettingsProvider>().nombre;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('OrganizaApp'),
-      ),
+      appBar: AppBar(title: const Text('OrganizaApp')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -27,7 +25,8 @@ class HomeScreen extends StatelessWidget {
                   'assets/images/logo.png',
                   width: 56,
                   height: 56,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.task_alt, size: 56),
+                  errorBuilder: (_, _, _) =>
+                      const Icon(Icons.task_alt, size: 56),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -38,7 +37,8 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () => Navigator.pushNamed(context, HabitsScreen.routeName),
+              onPressed: () =>
+                  Navigator.pushNamed(context, HabitsScreen.routeName),
               icon: const Icon(Icons.local_fire_department),
               label: const Text('Hábitos'),
             ),

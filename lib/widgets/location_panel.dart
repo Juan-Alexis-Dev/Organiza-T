@@ -29,10 +29,8 @@ class _LocationPanelState extends State<LocationPanel> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      _locationProvider = context.read<LocationProvider>();
-      _locationProvider.iniciarUbicacionTiempoReal();
-    });
+    _locationProvider = context.read<LocationProvider>();
+    Future.microtask(() => _locationProvider.iniciarUbicacionTiempoReal());
   }
 
   @override

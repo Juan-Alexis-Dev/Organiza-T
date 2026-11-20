@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/habit.dart';
 import '../providers/habit_provider.dart';
+import '../screens/habit_detail_screen.dart';
 import 'streak_badge.dart';
 
 class HabitCard extends StatelessWidget {
@@ -15,7 +16,7 @@ class HabitCard extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Eliminar hábito'),
-        content: Text('¿Seguro que quieres eliminar "${habit.name}"?'),
+        content: Text('¿Seguro que quieres eliminar "${habit.nombre}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -40,7 +41,7 @@ class HabitCard extends StatelessWidget {
       key: ValueKey(habit.id),
       direction: DismissDirection.endToStart,
       confirmDismiss: (_) => _confirmDelete(context),
-      onDismissed: (_) => provider.deleteHabit(habit.id),
+      onDismissed: (_) => provider.eliminar(habit.id),
       background: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
@@ -58,7 +59,7 @@ class HabitCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           onTap: () => Navigator.pushNamed(
             context,
-            '/habit-detail',
+            HabitDetailScreen.routeName,
             arguments: habit.id,
           ),
           child: Padding(
@@ -81,15 +82,15 @@ class HabitCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        habit.name,
+                        habit.nombre,
                         style: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (habit.description.isNotEmpty)
+                      if (habit.descripcion.isNotEmpty)
                         Text(
-                          habit.description,
+                          habit.descripcion,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -117,8 +118,8 @@ class HabitCard extends StatelessWidget {
                 IconButton(
                   iconSize: 32,
                   onPressed: () => habit.doneToday
-                      ? provider.undoToday(habit.id)
-                      : provider.completeToday(habit.id),
+                      ? provider.deshacerHoy(habit.id)
+                      : provider.completar(habit.id),
                   icon: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 250),
                     transitionBuilder: (child, anim) =>

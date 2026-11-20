@@ -60,6 +60,24 @@ class HabitProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> deshacerHoy(String habitId) async {
+    Habit? habito;
+    for (final candidato in _habitos) {
+      if (candidato.id == habitId) {
+        habito = candidato;
+        break;
+      }
+    }
+    if (habito == null) return;
+
+    final hoy = DateTime.now().toIso8601String().substring(0, 10);
+    if (habito.fechasCompletadas.contains(hoy)) {
+      habito.fechasCompletadas.remove(hoy);
+      await guardar();
+      notifyListeners();
+    }
+  }
+
   Future<void> eliminar(String habitId) async {
     _habitos.removeWhere((h) => h.id == habitId);
     await guardar();

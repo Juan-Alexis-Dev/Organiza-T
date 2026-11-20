@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/habit.dart';
 import '../providers/habit_provider.dart';
 
 class HabitFormScreen extends StatefulWidget {
+  static const routeName = '/habito-form';
   const HabitFormScreen({super.key});
 
   @override
@@ -30,10 +32,15 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
-    await context.read<HabitProvider>().addHabit(
-      _name.text.trim(),
-      _description.text.trim(),
-      placeName: _hasPlace ? _place.text.trim() : null,
+    await context.read<HabitProvider>().agregar(
+      Habit(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        nombre: _name.text.trim(),
+        descripcion: _description.text.trim(),
+        icono: Icons.local_fire_department.codePoint,
+        alAireLibre: _hasPlace,
+        direccionDestino: _hasPlace ? _place.text.trim() : null,
+      ),
     );
     if (!mounted) return;
     Navigator.pop(context, 'Hábito creado');

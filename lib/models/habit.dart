@@ -1,24 +1,30 @@
+import 'package:flutter/material.dart';
+
 class Habit {
   final String id;
-  String name;
-  String description;
-  List<String> completedDates;
-  List<String> photoPaths;
-  String? placeName;
-  double? latitude;
-  double? longitude;
+  String nombre;
+  String descripcion;
+  int icono; // codePoint de un ícono de MaterialIcons
+  List<String> fechasCompletadas;
+  List<String> fotos;
+  bool alAireLibre;
+  double? lat;
+  double? lng;
+  String? direccionDestino;
 
   Habit({
     required this.id,
-    required this.name,
-    this.description = '',
-    List<String>? completedDates,
-    List<String>? photoPaths,
-    this.placeName,
-    this.latitude,
-    this.longitude,
-  }) : completedDates = completedDates ?? [],
-       photoPaths = photoPaths ?? [];
+    required this.nombre,
+    this.descripcion = '',
+    required this.icono,
+    List<String>? fechasCompletadas,
+    List<String>? fotos,
+    this.alAireLibre = false,
+    this.lat,
+    this.lng,
+    this.direccionDestino,
+  }) : fechasCompletadas = fechasCompletadas ?? [],
+       fotos = fotos ?? [];
 
   static String dateKey(DateTime d) =>
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
@@ -28,12 +34,12 @@ class Habit {
     return DateTime.utc(int.parse(p[0]), int.parse(p[1]), int.parse(p[2]));
   }
 
-  bool get doneToday => completedDates.contains(dateKey(DateTime.now()));
+  bool get doneToday => fechasCompletadas.contains(dateKey(DateTime.now()));
 
-  int get totalDays => completedDates.toSet().length;
+  int get totalDays => fechasCompletadas.toSet().length;
 
   int get currentStreak {
-    final done = completedDates.toSet();
+    final done = fechasCompletadas.toSet();
     final now = DateTime.now();
     var day = DateTime(now.year, now.month, now.day);
     if (!done.contains(dateKey(day))) {
@@ -48,8 +54,8 @@ class Habit {
   }
 
   int get longestStreak {
-    if (completedDates.isEmpty) return 0;
-    final days = completedDates.toSet().map(_toUtcDay).toList()..sort();
+    if (fechasCompletadas.isEmpty) return 0;
+    final days = fechasCompletadas.toSet().map(_toUtcDay).toList()..sort();
     var best = 1;
     var run = 1;
     for (var i = 1; i < days.length; i++) {
@@ -64,7 +70,7 @@ class Habit {
   }
 
   List<bool> get last7Days {
-    final done = completedDates.toSet();
+    final done = fechasCompletadas.toSet();
     final now = DateTime.now();
     final result = <bool>[];
     for (var i = 6; i >= 0; i--) {
@@ -76,34 +82,38 @@ class Habit {
 
   bool complete({String? photoPath}) {
     if (doneToday) return false;
-    completedDates.add(dateKey(DateTime.now()));
-    if (photoPath != null) photoPaths.add(photoPath);
+    fechasCompletadas.add(dateKey(DateTime.now()));
+    if (photoPath != null) fotos.add(photoPath);
     return true;
   }
 
   void undoToday() {
-    completedDates.remove(dateKey(DateTime.now()));
+    fechasCompletadas.remove(dateKey(DateTime.now()));
   }
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
     'id': id,
-    'name': name,
-    'description': description,
-    'completedDates': completedDates,
-    'photoPaths': photoPaths,
-    'placeName': placeName,
-    'latitude': latitude,
-    'longitude': longitude,
+    'nombre': nombre,
+    'descripcion': descripcion,
+    'icono': icono,
+    'fechasCompletadas': fechasCompletadas,
+    'fotos': fotos,
+    'alAireLibre': alAireLibre,
+    'lat': lat,
+    'lng': lng,
+    'direccionDestino': direccionDestino,
   };
 
-  factory Habit.fromMap(Map<String, dynamic> m) => Habit(
-    id: m['id'],
-    name: m['name'],
-    description: m['description'] ?? '',
-    completedDates: List<String>.from(m['completedDates'] ?? []),
-    photoPaths: List<String>.from(m['photoPaths'] ?? []),
-    placeName: m['placeName'],
-    latitude: (m['latitude'] as num?)?.toDouble(),
-    longitude: (m['longitude'] as num?)?.toDouble(),
+  factory Habit.fromJson(Map<String, dynamic> json) => Habit(
+    id: json['id'] as String,
+    nombre: json['nombre'] as String,
+    descripcion: json['descripcion'] as String? ?? '',
+    icono: json['icono'] as int? ?? Icons.local_fire_department.codePoint,
+    fechasCompletadas: List<String>.from(json['fechasCompletadas'] ?? []),
+    fotos: List<String>.from(json['fotos'] ?? []),
+    alAireLibre: json['alAireLibre'] as bool? ?? false,
+    lat: (json['lat'] as num?)?.toDouble(),
+    lng: (json['lng'] as num?)?.toDouble(),
+    direccionDestino: json['direccionDestino'] as String?,
   );
 }

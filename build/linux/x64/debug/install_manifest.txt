@@ -1,0 +1,16 @@
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/organiza_t
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/icudtl.dat
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/lib/libfile_selector_linux_plugin.so
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/lib/libdartjni.so
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/shaders/stretch_effect.frag
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/NativeAssetsManifest.json
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/version.json
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/assets/images/logo.png
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
+/home/juan-alexis/Documentos/github/Organiza-T/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json

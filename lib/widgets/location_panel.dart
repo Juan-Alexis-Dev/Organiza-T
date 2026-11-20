@@ -25,6 +25,7 @@ class LocationPanel extends StatefulWidget {
 
 class _LocationPanelState extends State<LocationPanel> {
   late LocationProvider _locationProvider;
+  bool? _ultimoDentroDeRango;
 
   @override
   void initState() {
@@ -35,7 +36,8 @@ class _LocationPanelState extends State<LocationPanel> {
 
   @override
   void dispose() {
-    _locationProvider.detenerUbicacionTiempoReal();
+    // Sin notificar: el árbol de widgets está bloqueado durante dispose
+    _locationProvider.detenerUbicacionTiempoReal(notificar: false);
     super.dispose();
   }
 
@@ -59,7 +61,9 @@ class _LocationPanelState extends State<LocationPanel> {
     final dentroDeRango =
         distancia != null && distancia <= widget.radioPermitidoMetros;
 
-    if (widget.onDentroDeRangoChanged != null) {
+    if (widget.onDentroDeRangoChanged != null &&
+        dentroDeRango != _ultimoDentroDeRango) {
+      _ultimoDentroDeRango = dentroDeRango;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         widget.onDentroDeRangoChanged!(dentroDeRango);
       });

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/habit.dart';
 import '../providers/habit_provider.dart';
+import '../widgets/use_location_button.dart';
 
 class HabitFormScreen extends StatefulWidget {
   static const routeName = '/habito-form';
@@ -20,6 +21,8 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
   int _nameLength = 0;
   bool _hasPlace = false;
   bool _saving = false;
+  double? _lat;
+  double? _lng;
 
   @override
   void dispose() {
@@ -39,6 +42,8 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
         descripcion: _description.text.trim(),
         icono: Icons.local_fire_department.codePoint,
         alAireLibre: _hasPlace,
+        lat: _hasPlace ? _lat : null,
+        lng: _hasPlace ? _lng : null,
         direccionDestino: _hasPlace ? _place.text.trim() : null,
       ),
     );
@@ -104,19 +109,48 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 child: _hasPlace
                     ? Padding(
                         padding: const EdgeInsets.only(top: 8),
-                        child: TextFormField(
-                          controller: _place,
-                          decoration: const InputDecoration(
-                            labelText: 'Nombre del lugar (ej. Gimnasio)',
-                            prefixIcon: Icon(Icons.place),
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (v) {
-                            if (_hasPlace && (v == null || v.trim().isEmpty)) {
-                              return 'Escribe el nombre del lugar';
-                            }
-                            return null;
-                          },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Botón de la Persona 4: GPS + dirección con Nominatim
+                            UseLocationButton(
+                              onLocationObtained: (lat, lng, direccion) {
+                                setState(() {
+                                  _lat = lat;
+                                  _lng = lng;
+                                  _place.text = direccion;
+                                });
+                              },
+                            ),
+                            if (_lat != null && _lng != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6),
+                                child: Text(
+                                  'Coordenadas: ${_lat!.toStringAsFixed(5)}, ${_lng!.toStringAsFixed(5)}',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ),
+                            const SizedBox(height: 12),
+                            TextFormField(
+                              controller: _place,
+                              maxLines: 2,
+                              decoration: const InputDecoration(
+                                labelText: 'Lugar (ej. Gimnasio)',
+                                prefixIcon: Icon(Icons.place),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (v) {
+                                if (!_hasPlace) return null;
+                                if (_lat == null || _lng == null) {
+                                  return 'Pulsa "Usar mi ubicación" para fijar el lugar';
+                                }
+                                if (v == null || v.trim().isEmpty) {
+                                  return 'Escribe el nombre del lugar';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
                         ),
                       )
                     : const SizedBox.shrink(),

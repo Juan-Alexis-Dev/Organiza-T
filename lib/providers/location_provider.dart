@@ -146,11 +146,11 @@ class LocationProvider extends ChangeNotifier {
         );
   }
 
-  void detenerUbicacionTiempoReal() {
+  void detenerUbicacionTiempoReal({bool notificar = true}) {
     _suscripcionPosicion?.cancel();
     _suscripcionPosicion = null;
     _rastreandoEnVivo = false;
-    notifyListeners();
+    if (notificar) notifyListeners();
   }
 
   // 4. Cálculo de distancia en metros entre el usuario y el hábito

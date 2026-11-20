@@ -117,9 +117,20 @@ class HabitCard extends StatelessWidget {
                 ),
                 IconButton(
                   iconSize: 32,
-                  onPressed: () => habit.doneToday
-                      ? provider.deshacerHoy(habit.id)
-                      : provider.completar(habit.id),
+                  onPressed: () {
+                    if (habit.doneToday) {
+                      provider.deshacerHoy(habit.id);
+                    } else if (habit.alAireLibre && habit.lat != null) {
+                      // Requiere check-in por GPS: se completa desde el detalle
+                      Navigator.pushNamed(
+                        context,
+                        HabitDetailScreen.routeName,
+                        arguments: habit.id,
+                      );
+                    } else {
+                      provider.completar(habit.id);
+                    }
+                  },
                   icon: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 250),
                     transitionBuilder: (child, anim) =>

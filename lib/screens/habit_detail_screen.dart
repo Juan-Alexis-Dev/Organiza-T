@@ -5,12 +5,21 @@ import 'package:provider/provider.dart';
 
 import '../models/habit.dart';
 import '../providers/habit_provider.dart';
+import '../providers/settings_provider.dart';
 import '../widgets/photo_grid.dart';
 import '../widgets/location_panel.dart'; // Persona 4
 
-class HabitDetailScreen extends StatelessWidget {
+class HabitDetailScreen extends StatefulWidget {
   const HabitDetailScreen({super.key});
   static const routeName = '/habito-detail';
+
+  @override
+  State<HabitDetailScreen> createState() => _HabitDetailScreenState();
+}
+
+class _HabitDetailScreenState extends State<HabitDetailScreen> {
+  // Lo actualiza el LocationPanel cuando el usuario entra/sale del radio
+  bool _dentroDeRango = false;
 
   String _hoy() => DateTime.now().toIso8601String().substring(0, 10);
 
@@ -33,6 +42,12 @@ class HabitDetailScreen extends StatelessWidget {
       );
     }
     final completadoHoy = habito.fechasCompletadas.contains(_hoy());
+    final radio = context.watch<SettingsProvider>().radio.toDouble();
+    // Los hábitos ligados a un lugar solo se completan estando cerca
+    final requiereCheckIn =
+        habito.alAireLibre && habito.lat != null && habito.lng != null;
+    final puedeCompletar =
+        !completadoHoy && (!requiereCheckIn || _dentroDeRango);
 
     return Scaffold(
       appBar: AppBar(title: Text(habito.nombre)),
@@ -98,13 +113,19 @@ class HabitDetailScreen extends StatelessWidget {
             ),
 
             // Check-in por ubicación (solo hábitos al aire libre con lugar)
-            if (habito.alAireLibre && habito.lat != null)
+            if (requiereCheckIn)
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: LocationPanel(
                   destinoLat: habito.lat,
                   destinoLng: habito.lng,
                   direccionDestino: habito.direccionDestino,
+                  radioPermitidoMetros: radio,
+                  onDentroDeRangoChanged: (dentro) {
+                    if (mounted && dentro != _dentroDeRango) {
+                      setState(() => _dentroDeRango = dentro);
+                    }
+                  },
                 ),
               ),
 
@@ -155,11 +176,23 @@ class HabitDetailScreen extends StatelessWidget {
           child: SizedBox(
             height: 52,
             child: FilledButton.icon(
-              icon: Icon(completadoHoy ? Icons.check : Icons.done_all),
-              label: Text(completadoHoy ? 'Completado hoy' : 'Completar'),
-              onPressed: completadoHoy
-                  ? null
-                  : () => prov.completar(habito!.id),
+              icon: Icon(
+                completadoHoy
+                    ? Icons.check
+                    : puedeCompletar
+                    ? Icons.done_all
+                    : Icons.location_off,
+              ),
+              label: Text(
+                completadoHoy
+                    ? 'Completado hoy'
+                    : puedeCompletar
+                    ? 'Completar'
+                    : 'Acércate al lugar para completar',
+              ),
+              onPressed: puedeCompletar
+                  ? () => prov.completar(habito!.id)
+                  : null,
             ),
           ),
         ),

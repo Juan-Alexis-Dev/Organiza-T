@@ -1,103 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/habit.dart';
 import '../providers/habit_provider.dart';
-import '../widgets/habit_card.dart';
+import 'habit_detail_screen.dart';
+import 'habit_form_screen.dart';
 
+// TEMPORAL: la reemplaza la Persona 2.
 class HabitsScreen extends StatelessWidget {
+  static const routeName = '/habitos';
   const HabitsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<HabitProvider>();
-    final habits = provider.habits;
-
+    final prov = context.watch<HabitProvider>();
     return Scaffold(
       appBar: AppBar(title: const Text('Mis hábitos')),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.add),
-        label: const Text('Nuevo hábito'),
-        onPressed: () async {
-          final msg = await Navigator.pushNamed(context, '/habit-form');
-          if (msg is String && context.mounted) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(msg)));
-          }
-        },
-      ),
-      body: provider.loading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                      colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.tertiary,
-                      ],
-                    ),
+      body: prov.habitos.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Aún no tienes hábitos'),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () async {
+                      final habito = Habit(
+                        id: 'demo',
+                        nombre: 'Hábito de prueba',
+                        descripcion: 'Ejemplo inicial',
+                        icono: Icons.directions_run.codePoint,
+                      );
+                      await prov.agregar(habito);
+                      if (context.mounted) {
+                        Navigator.pushNamed(
+                          context,
+                          HabitDetailScreen.routeName,
+                          arguments: habito.id,
+                        );
+                      }
+                    },
+                    child: const Text('Crear hábito de prueba'),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _Stat(
-                        icon: Icons.check_circle,
-                        value: '${provider.doneTodayCount}/${habits.length}',
-                        label: 'Hoy',
-                      ),
-                      _Stat(
-                        icon: Icons.local_fire_department,
-                        value: '${provider.bestCurrentStreak}',
-                        label: 'Mejor racha',
-                      ),
-                    ],
+                ],
+              ),
+            )
+          : ListView.builder(
+              itemCount: prov.habitos.length,
+              itemBuilder: (context, index) {
+                final habito = prov.habitos[index];
+                return ListTile(
+                  leading: Icon(
+                    // El código de icono se obtiene de los datos guardados.
+                    // ignore: non_const_argument_for_const_parameter
+                    IconData(habito.icono, fontFamily: 'MaterialIcons'),
                   ),
-                ),
-                Expanded(
-                  child: habits.isEmpty
-                      ? const Center(
-                          child: Text('Aún no tienes hábitos. ¡Crea uno!'),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 90),
-                          itemCount: habits.length,
-                          itemBuilder: (context, i) =>
-                              HabitCard(habit: habits[i]),
-                        ),
-                ),
-              ],
+                  title: Text(habito.nombre),
+                  subtitle: Text(
+                    '${habito.fechasCompletadas.length} días completados',
+                  ),
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    HabitDetailScreen.routeName,
+                    arguments: habito.id,
+                  ),
+                );
+              },
             ),
-    );
-  }
-}
-
-class _Stat extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final String label;
-
-  const _Stat({required this.icon, required this.value, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white, size: 28),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(label, style: const TextStyle(color: Colors.white)),
-      ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () =>
+            Navigator.pushNamed(context, HabitFormScreen.routeName),
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

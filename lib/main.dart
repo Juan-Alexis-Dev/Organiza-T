@@ -7,6 +7,7 @@ import 'screens/habit_detail_screen.dart';
 import 'screens/habit_form_screen.dart';
 import 'screens/habits_screen.dart';
 import 'screens/home_screen.dart';
+
 /*
 import 'screens/settings_screen.dart';
 import 'screens/task_form_screen.dart';
@@ -33,12 +34,17 @@ class OrganizaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       title: 'OrganizaApp',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorSchemeSeed: Colors.teal, brightness: Brightness.light),
-      darkTheme: ThemeData(colorSchemeSeed: Colors.teal, brightness: Brightness.dark),
+      theme: ThemeData(
+        colorSchemeSeed: Colors.teal,
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.teal,
+        brightness: Brightness.dark,
+      ),
       routes: {
         HomeScreen.routeName: (_) => const HomeScreen(),
         // TasksScreen.routeName: (_) => const TasksScreen(),
@@ -48,8 +54,6 @@ class OrganizaApp extends StatelessWidget {
         HabitDetailScreen.routeName: (_) => const HabitDetailScreen(),
         // SettingsScreen.routeName: (_) => const SettingsScreen(),
       },
-
-
     );
   }
 }

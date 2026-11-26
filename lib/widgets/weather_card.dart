@@ -61,35 +61,34 @@ class _WeatherCardState extends State<WeatherCard> {
                 ],
               )
             : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        weather.iconoClima,
-                        size: 42,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 14),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            weather.temperatura != null
-                                ? '${weather.temperatura!.toStringAsFixed(1)} °C'
-                                : '-- °C',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  Icon(
+                    weather.iconoClima,
+                    size: 42,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          weather.temperatura != null
+                              ? '${weather.temperatura!.toStringAsFixed(1)} °C'
+                              : '-- °C',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            '${weather.descripcionClima} • Viento: ${weather.velocidadViento ?? 0} km/h',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        Text(
+                          '${weather.descripcionClima} • Viento: ${weather.velocidadViento ?? 0} km/h',
+                          style: Theme.of(context).textTheme.bodySmall,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                   IconButton(
                     tooltip: 'Actualizar clima',

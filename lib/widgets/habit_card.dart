@@ -6,12 +6,12 @@ import '../providers/habit_provider.dart';
 import '../screens/habit_detail_screen.dart';
 import 'streak_badge.dart';
 
-class HabitCard extends StatelessWidget {
+class HabitCard extends StatelessWidget { // Widget que representa un hábito en la lista de hábitos, mostrando su nombre, descripción, racha actual y estado de completado del día. Permite marcar como hecho o deshacerlo, y eliminar el hábito con un swipe.
   final Habit habit;
 
   const HabitCard({super.key, required this.habit});
 
-  Future<bool> _confirmDelete(BuildContext context) async {
+  Future<bool> _confirmDelete(BuildContext context) async { // Muestra un diálogo de confirmación antes de eliminar el hábito
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(

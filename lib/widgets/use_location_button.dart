@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/location_provider.dart';
 
-class UseLocationButton extends StatelessWidget {
+class UseLocationButton extends StatelessWidget { // Widget que muestra un botón para obtener la ubicación actual del usuario y la dirección asociada, usando LocationProvider. Llama a un callback con la latitud, longitud y dirección obtenidas.
   final void Function(double lat, double lng, String direccion)
   onLocationObtained;
 
@@ -13,7 +13,7 @@ class UseLocationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final location = context.watch<LocationProvider>();
 
-    return Column(
+    return Column( // Muestra un botón para obtener la ubicación actual del usuario y la dirección asociada, usando LocationProvider. Llama a un callback con la latitud, longitud y dirección obtenidas.
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         OutlinedButton.icon(

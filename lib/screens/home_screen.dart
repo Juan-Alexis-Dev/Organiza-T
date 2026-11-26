@@ -11,12 +11,13 @@ import 'habits_screen.dart';
 import 'settings_screen.dart';
 import 'tasks_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatelessWidget { // Pantalla principal que muestra un saludo, clima, accesos rápidos a tareas y hábitos, pendientes de hoy y resumen de rachas
   static const routeName = '/';
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Lee los datos de los proveedores para mostrar la información en la pantalla
     final nombre = context.watch<SettingsProvider>().nombre;
     final tareasProv = context.watch<TaskProvider>();
     final habitos = context.watch<HabitProvider>().habitos;

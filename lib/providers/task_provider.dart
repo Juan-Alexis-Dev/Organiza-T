@@ -16,7 +16,7 @@ class TaskProvider extends ChangeNotifier {
 
   Future<File> _archivo() async {
     final docs = await getApplicationDocumentsDirectory();
-    final sep = Platform.pathSeparator;
+    final sep = Platform.pathSeparator; // Obtiene el separador de directorios según el sistema operativo
     final carpeta = Directory('${docs.path}${sep}OrganizaApp');
     if (!await carpeta.exists()) {
       await carpeta.create(recursive: true);
@@ -24,7 +24,7 @@ class TaskProvider extends ChangeNotifier {
     return File('${carpeta.path}${sep}tareas.json');
   }
 
-  Future<void> cargar() async {
+  Future<void> cargar() async { // Carga la lista de tareas desde el archivo JSON en Documentos/OrganizaApp/tareas.json
     try {
       final archivo = await _archivo();
       if (!await archivo.exists()) return;
@@ -39,7 +39,7 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _guardar() async {
+  Future<void> _guardar() async { // Guarda la lista de tareas en el archivo JSON en Documentos/OrganizaApp/tareas.json
     final archivo = await _archivo();
     final datos = _tareas.map((t) => t.toJson()).toList();
     await archivo.writeAsString(jsonEncode(datos));
@@ -55,7 +55,7 @@ class TaskProvider extends ChangeNotifier {
     await _guardar();
   }
 
-  Future<void> editar(String id, String titulo, String descripcion) async {
+  Future<void> editar(String id, String titulo, String descripcion) async { // Edita la tarea con el ID dado, actualizando su título y descripción, y guarda los cambios en el archivo JSON
     final tarea = _tareas.firstWhere((t) => t.id == id);
     tarea.titulo = titulo;
     tarea.descripcion = descripcion;
@@ -63,14 +63,14 @@ class TaskProvider extends ChangeNotifier {
     await _guardar();
   }
 
-  Future<void> alternar(String id) async {
+  Future<void> alternar(String id) async { // Alterna el estado de completada de la tarea con el ID dado y guarda los cambios en el archivo JSON
     final tarea = _tareas.firstWhere((t) => t.id == id);
     tarea.completada = !tarea.completada;
     notifyListeners();
     await _guardar();
   }
 
-  Future<void> eliminar(String id) async {
+  Future<void> eliminar(String id) async { // Elimina la tarea con el ID dado de la lista y guarda los cambios en el archivo JSON
     _tareas.removeWhere((t) => t.id == id);
     notifyListeners();
     await _guardar();

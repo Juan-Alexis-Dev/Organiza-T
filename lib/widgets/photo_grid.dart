@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-class PhotoGrid extends StatelessWidget {
+class PhotoGrid extends StatelessWidget { // Widget que muestra una cuadrícula de fotos a partir de una lista de rutas de archivos. Permite hacer clic en una foto para verla en tamaño completo.
   final List<String> fotos;
   const PhotoGrid({super.key, required this.fotos});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { // Construye la cuadrícula de fotos, mostrando un mensaje si no hay fotos disponibles
     if (fotos.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(24),
@@ -31,12 +31,12 @@ class PhotoGrid extends StatelessWidget {
         crossAxisSpacing: 6,
         mainAxisSpacing: 6,
       ),
-      itemBuilder: (context, i) => GestureDetector(
+      itemBuilder: (context, i) => GestureDetector( // Permite tocar la foto para abrirla en un diálogo a tamaño completo
         onTap: () => showDialog(
           context: context,
           builder: (_) => Dialog(child: Image.file(File(fotos[i]))),
         ),
-        child: ClipRRect(
+        child: ClipRRect( // Muestra la foto en miniatura con bordes redondeados
           borderRadius: BorderRadius.circular(8),
           child: Image.file(
             File(fotos[i]),

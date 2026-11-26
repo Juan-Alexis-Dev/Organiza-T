@@ -9,7 +9,7 @@ import '../providers/settings_provider.dart';
 import '../widgets/photo_grid.dart';
 import '../widgets/location_panel.dart'; // Persona 4
 
-class HabitDetailScreen extends StatefulWidget {
+class HabitDetailScreen extends StatefulWidget { // Pantalla de detalle de un hábito, mostrando información, fotos y botón para completar
   const HabitDetailScreen({super.key});
   static const routeName = '/habito-detail';
 
@@ -70,7 +70,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                             // El código de icono se obtiene de los datos guardados.
                             // ignore: non_const_argument_for_const_parameter
                             IconData(habito.icono, fontFamily: 'MaterialIcons'),
-                            size: 80,
+                            size: 100,
                           ),
                         ),
                   // Degradado para que el texto se lea sobre cualquier foto

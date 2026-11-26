@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/location_provider.dart';
 
-class LocationPanel extends StatefulWidget {
+class LocationPanel extends StatefulWidget { // Widget que muestra la ubicación en tiempo real del usuario y calcula la distancia a un destino, indicando si está dentro del radio permitido. Permite recibir un callback cuando cambia el estado de "dentro de rango".
   final double? destinoLat;
   final double? destinoLng;
   final String? direccionDestino;
@@ -42,7 +42,7 @@ class _LocationPanelState extends State<LocationPanel> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { // Muestra la distancia al destino y si el usuario está dentro del radio permitido, o un mensaje de error si no se puede calcular la distancia
     if (widget.destinoLat == null || widget.destinoLng == null) {
       return const Card(
         child: ListTile(
@@ -58,7 +58,7 @@ class _LocationPanelState extends State<LocationPanel> {
       widget.destinoLat!,
       widget.destinoLng!,
     );
-    final dentroDeRango =
+    final dentroDeRango = // Determina si el usuario está dentro del radio permitido
         distancia != null && distancia <= widget.radioPermitidoMetros;
 
     if (widget.onDentroDeRangoChanged != null &&
@@ -79,7 +79,7 @@ class _LocationPanelState extends State<LocationPanel> {
           children: [
             Row(
               children: [
-                Icon(
+                Icon( // Muestra un icono de check si está dentro del radio, o un icono de búsqueda si no lo está
                   dentroDeRango ? Icons.check_circle : Icons.location_searching,
                   color: dentroDeRango ? Colors.green : Colors.orange,
                 ),
@@ -91,7 +91,7 @@ class _LocationPanelState extends State<LocationPanel> {
               ],
             ),
             const SizedBox(height: 8),
-            if (widget.direccionDestino != null)
+            if (widget.direccionDestino != null) // Muestra la dirección del destino si está disponible
               Text(
                 'Meta: ${widget.direccionDestino}',
                 maxLines: 2,
@@ -99,9 +99,9 @@ class _LocationPanelState extends State<LocationPanel> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             const SizedBox(height: 6),
-            if (location.error != null)
+            if (location.error != null) // Muestra un mensaje de error si no se puede obtener la ubicación
               Text(location.error!, style: const TextStyle(color: Colors.red))
-            else if (distancia == null)
+            else if (distancia == null) // Muestra un indicador de carga mientras se calcula la distancia
               const Row(
                 children: [
                   SizedBox(
@@ -113,7 +113,7 @@ class _LocationPanelState extends State<LocationPanel> {
                   Text('Calculando distancia GPS...'),
                 ],
               )
-            else ...[
+            else ...[ // Muestra la distancia al destino y las coordenadas actuales si se puede calcular la distancia
               Text(
                 'Distancia al punto: ${distancia.toStringAsFixed(1)} m (Radio máx: ${widget.radioPermitidoMetros.toInt()} m)',
                 style: TextStyle(

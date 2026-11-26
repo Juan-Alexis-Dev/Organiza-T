@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class WeatherProvider extends ChangeNotifier {
+class WeatherProvider extends ChangeNotifier { // Proveedor para manejar la información del clima obtenida de la API de Open-Meteo
   double? _temperatura;
   double? _velocidadViento;
   int? _codigoClima;
@@ -16,7 +16,7 @@ class WeatherProvider extends ChangeNotifier {
   bool get cargando => _cargando;
   String? get error => _error;
 
-  String get descripcionClima {
+  String get descripcionClima { // Retorna una descripción legible del clima según el código de clima obtenido de la API
     if (_codigoClima == null) return 'Sin datos';
     if (_codigoClima == 0) return 'Despejado';
     if (_codigoClima! <= 3) return 'Parcialmente nublado';
@@ -27,7 +27,7 @@ class WeatherProvider extends ChangeNotifier {
     return 'Tormenta eléctrica';
   }
 
-  IconData get iconoClima {
+  IconData get iconoClima { // Retorna un ícono de MaterialIcons representando el clima según el código de clima obtenido de la API
     if (_codigoClima == null) return Icons.cloud_queue;
     if (_codigoClima == 0) return Icons.wb_sunny;
     if (_codigoClima! <= 3) return Icons.wb_cloudy;
@@ -36,7 +36,7 @@ class WeatherProvider extends ChangeNotifier {
     return Icons.thunderstorm;
   }
 
-  Future<void> obtenerClima(double lat, double lon) async {
+  Future<void> obtenerClima(double lat, double lon) async { // Obtiene el clima actual para la latitud y longitud dadas usando la API de Open-Meteo
     _cargando = true;
     _error = null;
     notifyListeners();

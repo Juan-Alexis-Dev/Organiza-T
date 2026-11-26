@@ -6,7 +6,7 @@ import '../providers/task_provider.dart';
 import '../widgets/task_tile.dart';
 import 'task_form_screen.dart';
 
-class TasksScreen extends StatefulWidget {
+class TasksScreen extends StatefulWidget { // Pantalla principal que muestra la lista de tareas del usuario, permite crear nuevas tareas y filtrar por estado
   static const routeName = '/tareas';
   const TasksScreen({super.key});
 
@@ -37,8 +37,8 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<TaskProvider>();
-    final tareas = _filtrar(provider.tareas);
+    final provider = context.watch<TaskProvider>(); // Lee el TaskProvider para obtener la lista de tareas y filtrarlas según el estado seleccionado
+    final tareas = _filtrar(provider.tareas); // Filtra las tareas según el estado seleccionado (todas, pendientes o completadas)
 
     return Scaffold(
       appBar: AppBar(title: const Text('Mis tareas')),

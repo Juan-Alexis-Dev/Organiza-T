@@ -41,7 +41,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     super.dispose();
   }
 
-  String? _validarTitulo(String? valor) {
+  String? _validarTitulo(String? valor) { 
     final texto = valor?.trim() ?? '';
     if (texto.isEmpty) return 'El título es obligatorio';
     if (texto.length < 3) return 'Mínimo 3 caracteres';
@@ -54,10 +54,10 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     return null;
   }
 
-  void _guardar() {
-    if (!_formKey.currentState!.validate()) return;
+  void _guardar() { // Valida el formulario y llama a TaskProvider para agregar o editar la tarea según corresponda, luego cierra la pantalla
+    if (!_formKey.currentState!.validate()) return; // Valida el formulario antes de guardar
 
-    final provider = context.read<TaskProvider>();
+    final provider = context.read<TaskProvider>(); // Lee el TaskProvider para agregar o editar la tarea según corresponda
     final titulo = _tituloCtrl.text.trim();
     final descripcion = _descripcionCtrl.text.trim();
 

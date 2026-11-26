@@ -5,7 +5,7 @@ import '../models/habit.dart';
 import '../providers/habit_provider.dart';
 import '../widgets/use_location_button.dart';
 
-class HabitFormScreen extends StatefulWidget {
+class HabitFormScreen extends StatefulWidget { // Pantalla para crear un nuevo hábito, con formulario para nombre, descripción y lugar opcional
   static const routeName = '/habito-form';
   const HabitFormScreen({super.key});
 
@@ -32,7 +32,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     super.dispose();
   }
 
-  Future<void> _save() async {
+  Future<void> _save() async { // Valida el formulario, crea un nuevo hábito y lo guarda usando HabitProvider
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     await context.read<HabitProvider>().agregar(
@@ -112,7 +112,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // Botón de la Persona 4: GPS + dirección con Nominatim
+                            // dirección con Nominatim
                             UseLocationButton(
                               onLocationObtained: (lat, lng, direccion) {
                                 setState(() {

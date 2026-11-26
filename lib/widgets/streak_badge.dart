@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class StreakBadge extends StatelessWidget {
+class StreakBadge extends StatelessWidget { // Widget que muestra un ícono de racha con el número de días consecutivos completados. Cambia de color según la racha y si se completó hoy.
   final int streak;
   final bool doneToday;
   final double size;
@@ -20,7 +20,7 @@ class StreakBadge extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { // Construye el widget de racha, mostrando un círculo con un ícono de fuego y el número de días consecutivos completados. Cambia de tamaño y color si se completó hoy.
     return AnimatedContainer(
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeOut,

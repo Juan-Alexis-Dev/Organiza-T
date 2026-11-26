@@ -5,11 +5,11 @@ import '../providers/habit_provider.dart';
 import '../widgets/habit_card.dart';
 import 'habit_form_screen.dart';
 
-class HabitsScreen extends StatelessWidget {
+class HabitsScreen extends StatelessWidget { // Pantalla principal que muestra la lista de hábitos del usuario y permite crear nuevos hábitos
   static const routeName = '/habitos';
   const HabitsScreen({super.key});
 
-  Future<void> _nuevoHabito(BuildContext context) async {
+  Future<void> _nuevoHabito(BuildContext context) async { // Navega a la pantalla de formulario para crear un nuevo hábito y muestra un SnackBar con el mensaje de éxito al regresar
     final mensaje = await Navigator.pushNamed(
       context,
       HabitFormScreen.routeName,
@@ -51,7 +51,7 @@ class HabitsScreen extends StatelessWidget {
           : ListView.builder(
               padding: const EdgeInsets.only(top: 8, bottom: 88),
               itemCount: habitos.length,
-              itemBuilder: (context, index) =>
+              itemBuilder: (context, index) => // Muestra cada hábito en un HabitCard, que al tocarlo navega a la pantalla de detalle del hábito
                   HabitCard(habit: habitos[index]),
             ),
       floatingActionButton: FloatingActionButton(

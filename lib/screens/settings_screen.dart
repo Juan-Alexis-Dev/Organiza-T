@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/settings_provider.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatefulWidget {// Pantalla de ajustes, permite cambiar el modo oscuro, nombre del usuario y radio de check-in
   static const routeName = '/ajustes';
   const SettingsScreen({super.key});
 
@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-  void _guardarNombre() {
+  void _guardarNombre() { // Guarda el nombre del usuario usando SettingsProvider y muestra un SnackBar de confirmación
     context.read<SettingsProvider>().cambiarNombre(_nombreCtrl.text.trim());
     FocusScope.of(context).unfocus();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -52,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: settings.modoOscuro,
             onChanged: settings.cambiarModoOscuro,
           ),
-          const Divider(),
+          const Divider(), // Separador visual entre secciones
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: TextField(

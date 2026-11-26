@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Habit {
+class Habit { // Modelo para representar un hábito
   final String id;
   String nombre;
   String descripcion;
@@ -26,19 +26,19 @@ class Habit {
   }) : fechasCompletadas = fechasCompletadas ?? [],
        fotos = fotos ?? [];
 
-  static String dateKey(DateTime d) =>
+  static String dateKey(DateTime d) => // Convierte una fecha a un string en formato YYYY-MM-DD
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
-  static DateTime _toUtcDay(String key) {
+  static DateTime _toUtcDay(String key) { // Convierte un string en formato YYYY-MM-DD a un DateTime en UTC
     final p = key.split('-');
     return DateTime.utc(int.parse(p[0]), int.parse(p[1]), int.parse(p[2]));
   }
 
-  bool get doneToday => fechasCompletadas.contains(dateKey(DateTime.now()));
+  bool get doneToday => fechasCompletadas.contains(dateKey(DateTime.now())); // Verifica si el hábito fue completado hoy
 
-  int get totalDays => fechasCompletadas.toSet().length;
+  int get totalDays => fechasCompletadas.toSet().length; // Retorna el número total de días en los que se completó el hábito
 
-  int get currentStreak {
+  int get currentStreak { // Calcula la racha actual de días consecutivos en los que se completó el hábito
     final done = fechasCompletadas.toSet();
     final now = DateTime.now();
     var day = DateTime(now.year, now.month, now.day);
@@ -53,7 +53,7 @@ class Habit {
     return streak;
   }
 
-  int get longestStreak {
+  int get longestStreak { // Calcula la racha más larga de días consecutivos en los que se completó el hábito
     if (fechasCompletadas.isEmpty) return 0;
     final days = fechasCompletadas.toSet().map(_toUtcDay).toList()..sort();
     var best = 1;
@@ -69,7 +69,7 @@ class Habit {
     return best;
   }
 
-  List<bool> get last7Days {
+  List<bool> get last7Days { // Retorna una lista de booleanos indicando si el hábito fue completado en los últimos 7 días
     final done = fechasCompletadas.toSet();
     final now = DateTime.now();
     final result = <bool>[];
@@ -80,18 +80,18 @@ class Habit {
     return result;
   }
 
-  bool complete({String? photoPath}) {
+  bool complete({String? photoPath}) { // Marca el hábito como completado hoy y opcionalmente agrega una foto
     if (doneToday) return false;
     fechasCompletadas.add(dateKey(DateTime.now()));
     if (photoPath != null) fotos.add(photoPath);
     return true;
   }
 
-  void undoToday() {
+  void undoToday() { // Desmarca el hábito como completado hoy
     fechasCompletadas.remove(dateKey(DateTime.now()));
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => { // Convierte el hábito a un mapa JSON
     'id': id,
     'nombre': nombre,
     'descripcion': descripcion,
@@ -104,7 +104,7 @@ class Habit {
     'direccionDestino': direccionDestino,
   };
 
-  factory Habit.fromJson(Map<String, dynamic> json) => Habit(
+  factory Habit.fromJson(Map<String, dynamic> json) => Habit( // Crea un hábito a partir de un mapa JSON
     id: json['id'] as String,
     nombre: json['nombre'] as String,
     descripcion: json['descripcion'] as String? ?? '',

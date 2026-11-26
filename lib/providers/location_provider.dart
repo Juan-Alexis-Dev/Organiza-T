@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
-class LocationProvider extends ChangeNotifier {
+class LocationProvider extends ChangeNotifier { // Proveedor para manejar la ubicación del usuario y la dirección legible
   Position? _posicionActual;
   String? _direccionActual;
   int _peticionesActivas = 0;

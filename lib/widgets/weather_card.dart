@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/location_provider.dart';
 import '../providers/weather_provider.dart';
 
-class WeatherCard extends StatefulWidget {
+class WeatherCard extends StatefulWidget { // Widget que muestra el clima actual de la ubicación del usuario, obteniendo la posición y el clima usando LocationProvider y WeatherProvider. Muestra un ícono, temperatura, descripción y velocidad del viento, con opción de actualizar.
   const WeatherCard({super.key});
 
   @override
@@ -18,7 +18,7 @@ class _WeatherCardState extends State<WeatherCard> {
     Future.microtask(() => _cargarClimaLocal());
   }
 
-  Future<void> _cargarClimaLocal() async {
+  Future<void> _cargarClimaLocal() async { // Obtiene la ubicación actual del usuario usando LocationProvider y luego obtiene el clima de esa ubicación usando WeatherProvider. Actualiza el estado del widget para reflejar los cambios.
     final locationProv = context.read<LocationProvider>();
     final weatherProv = context.read<WeatherProvider>();
 
@@ -36,7 +36,7 @@ class _WeatherCardState extends State<WeatherCard> {
     final weather = context.watch<WeatherProvider>();
     final location = context.watch<LocationProvider>();
 
-    return Card(
+    return Card( // Muestra un Card con el clima actual de la ubicación del usuario, obteniendo la posición y el clima usando LocationProvider y WeatherProvider. Muestra un ícono, temperatura, descripción y velocidad del viento, con opción de actualizar.
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -60,7 +60,7 @@ class _WeatherCardState extends State<WeatherCard> {
                   ),
                 ],
               )
-            : Row(
+            : Row( // Muestra un Row con el ícono del clima, la temperatura, descripción y velocidad del viento, y un botón para actualizar el clima. Cambia según si está cargando, hay error o se obtuvo el clima correctamente.
                 children: [
                   Icon(
                     weather.iconoClima,

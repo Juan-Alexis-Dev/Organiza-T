@@ -9,13 +9,13 @@ class SettingsProvider extends ChangeNotifier {
 
   bool _modoOscuro = false;
   String _nombre = '';
-  int _radio = 100; // metros, lo usará la Persona 4 para el check-in
+  int _radio = 100; // metros, para el check-in de hábitos al aire libre
 
   bool get modoOscuro => _modoOscuro;
   String get nombre => _nombre;
   int get radio => _radio;
 
-  Future<void> cargar() async {
+  Future<void> cargar() async { // Carga las preferencias desde SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     _modoOscuro = prefs.getBool(_kModoOscuro) ?? false;
     _nombre = prefs.getString(_kNombre) ?? '';
@@ -23,21 +23,21 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> cambiarModoOscuro(bool valor) async {
+  Future<void> cambiarModoOscuro(bool valor) async { // Cambia el modo oscuro y guarda la preferencia en SharedPreferences
     _modoOscuro = valor;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kModoOscuro, valor);
   }
 
-  Future<void> cambiarNombre(String valor) async {
+  Future<void> cambiarNombre(String valor) async { // Cambia el nombre del usuario y guarda la preferencia en SharedPreferences
     _nombre = valor;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kNombre, valor);
   }
 
-  Future<void> cambiarRadio(int valor) async {
+  Future<void> cambiarRadio(int valor) async { // Cambia el radio de check-in y guarda la preferencia en SharedPreferences
     _radio = valor;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();

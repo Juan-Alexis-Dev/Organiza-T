@@ -17,7 +17,7 @@ import 'screens/tasks_screen.dart';
 void main() {
   runApp(
     MultiProvider(
-      providers: [
+      providers: [ // Proveedores de estado para toda la aplicación, cargando los datos iniciales de cada uno
         ChangeNotifierProvider(create: (_) => SettingsProvider()..cargar()),
         ChangeNotifierProvider(create: (_) => TaskProvider()..cargar()),
         ChangeNotifierProvider(create: (_) => HabitProvider()..cargar()),
@@ -34,7 +34,7 @@ class OrganizaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final modoOscuro = context.watch<SettingsProvider>().modoOscuro;
+    final modoOscuro = context.watch<SettingsProvider>().modoOscuro; // Lee el modo oscuro del SettingsProvider para aplicar el tema correspondiente a la aplicación
 
     return MaterialApp(
       title: 'OrganizaApp',
@@ -48,7 +48,7 @@ class OrganizaApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       themeMode: modoOscuro ? ThemeMode.dark : ThemeMode.light,
-      routes: {
+      routes: { // Rutas de navegación de la aplicación, cada pantalla tiene su propia ruta y se puede acceder a ella desde cualquier parte de la app
         HomeScreen.routeName: (_) => const HomeScreen(),
         TasksScreen.routeName: (_) => const TasksScreen(),
         TaskFormScreen.routeName: (_) => const TaskFormScreen(),

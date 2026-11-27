@@ -30,7 +30,7 @@ class StreakBadge extends StatelessWidget { // Widget que muestra un ícono de r
         shape: BoxShape.circle,
         color: _color,
         boxShadow: doneToday
-            ? [BoxShadow(color: _color.withOpacity(0.5), blurRadius: 12)]
+            ? [BoxShadow(color: _color.withValues(alpha: 0.5), blurRadius: 12)]
             : [],
       ),
       child: Column(

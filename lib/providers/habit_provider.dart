@@ -42,7 +42,49 @@ class HabitProvider extends ChangeNotifier { // Proveedor para manejar la lista 
     notifyListeners();
   }
 
-  Future<void> completar(String habitId) async { // Marca el hábito con el ID dado como completado hoy y lo guarda en SharedPreferences
+    // Revisa si el hábito tiene una foto tomada HOY.
+  // El nombre de cada foto lleva guardado el momento en que se tomó,
+  // así que lo leemos de ahí para saber el día.
+  bool tieneFotoHoy(Habit habito) {
+    final hoy = Habit.dateKey(DateTime.now());
+    for (final ruta in habito.fotos) {
+      // Nos quedamos solo con el nombre del archivo (sin carpetas)
+      final nombre = ruta.split(RegExp(r'[\\/]')).last;
+      final inicio = nombre.lastIndexOf('_');
+      final fin = nombre.lastIndexOf('.');
+      if (inicio == -1 || fin <= inicio) continue;
+
+      // Lo que está entre "_" y "." es el momento en que se tomó la foto
+      final milisegundos = int.tryParse(nombre.substring(inicio + 1, fin));
+      if (milisegundos == null) continue;
+
+      final fecha = DateTime.fromMillisecondsSinceEpoch(milisegundos);
+      if (Habit.dateKey(fecha) == hoy) return true;
+    }
+    return false;
+  }
+
+  // Dice qué le falta al hábito para poder completarse.
+  // Si devuelve null, significa que ya puede completarse.
+  String? motivoBloqueo(Habit habito, {required bool dentroDeRango}) {
+    // Regla 1: siempre se necesita una foto de hoy
+    if (!tieneFotoHoy(habito)) {
+      return 'Sube una foto de hoy para completar el hábito.';
+    }
+
+    // Regla 2: si el hábito es al aire libre y tiene lugar, hay que estar ahí
+    final pideUbicacion =
+        habito.alAireLibre && habito.lat != null && habito.lng != null;
+    if (pideUbicacion && !dentroDeRango) {
+      return 'Debes estar en el lugar del hábito para completarlo.';
+    }
+
+    return null;
+  }
+
+  // Marca el hábito como completado hoy, pero solo si cumple las reglas.
+  // Devuelve un mensaje si no se pudo, o null si todo salió bien.
+  Future<String?> completar(String habitId, {bool dentroDeRango = false}) async {
     Habit? habito;
     for (final candidato in _habitos) {
       if (candidato.id == habitId) {
@@ -50,14 +92,20 @@ class HabitProvider extends ChangeNotifier { // Proveedor para manejar la lista 
         break;
       }
     }
-    if (habito == null) return;
+    if (habito == null) return 'No se encontró el hábito.';
 
-    final hoy = DateTime.now().toIso8601String().substring(0, 10);
-    if (!habito.fechasCompletadas.contains(hoy)) {
-      habito.fechasCompletadas.add(hoy);
-      await guardar();
-      notifyListeners();
-    }
+    // Si ya estaba completado hoy, no hacemos nada
+    if (habito.doneToday) return 'Este hábito ya está completado hoy.';
+
+    // Revisamos las reglas antes de guardar nada
+    final motivo = motivoBloqueo(habito, dentroDeRango: dentroDeRango);
+    if (motivo != null) return motivo;
+
+    // Todo bien: guardamos la fecha de hoy
+    habito.fechasCompletadas.add(Habit.dateKey(DateTime.now()));
+    await guardar();
+    notifyListeners();
+    return null;
   }
 
   Future<void> deshacerHoy(String habitId) async { // Desmarca el hábito con el ID dado como completado hoy y lo guarda en SharedPreferences

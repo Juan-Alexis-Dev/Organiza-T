@@ -107,7 +107,7 @@ class HabitCard extends StatelessWidget { // Widget que representa un hábito en
                                 shape: BoxShape.circle,
                                 color: done
                                     ? Colors.green
-                                    : Colors.grey.withOpacity(0.35),
+                                    : Colors.grey.withValues(alpha: 0.35),
                               ),
                             ),
                         ],

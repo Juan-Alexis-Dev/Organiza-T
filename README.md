@@ -229,7 +229,7 @@ Permisos de Android (`android/app/src/main/AndroidManifest.xml`):
 | Dato | Medio |
 |---|---|
 | Tema, nombre de usuario, radio del check-in | `SharedPreferences` |
-| Tareas | `tareas.json` (carpeta de documentos de la app, vía `path_provider`) |
+| Tareas | Android/Windows/Linux: `tareas.json` (vía `path_provider`); web: `SharedPreferences` |
 | Hábitos | `habitos.json` (misma carpeta) |
 | Fotos de evidencia | Copiadas a la carpeta de la app; `habitos.json` guarda solo las rutas |
 

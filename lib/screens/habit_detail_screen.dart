@@ -3,51 +3,57 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/habit.dart';
 import '../providers/habit_provider.dart';
 import '../providers/settings_provider.dart';
+import '../widgets/location_panel.dart';
 import '../widgets/photo_grid.dart';
-import '../widgets/location_panel.dart'; // Persona 4
 
-class HabitDetailScreen extends StatefulWidget { // Pantalla de detalle de un hábito, mostrando información, fotos y botón para completar
+class HabitDetailScreen extends StatefulWidget {
+  static const routeName = '/habito-detalle';
   const HabitDetailScreen({super.key});
-  static const routeName = '/habito-detail';
 
   @override
   State<HabitDetailScreen> createState() => _HabitDetailScreenState();
 }
 
 class _HabitDetailScreenState extends State<HabitDetailScreen> {
-  // Lo actualiza el LocationPanel cuando el usuario entra/sale del radio
+  // Aquí se guarda si la persona está dentro del lugar del hábito.
+  // Empieza en "no" hasta que el GPS confirme que sí.
   bool _dentroDeRango = false;
 
-  String _hoy() => DateTime.now().toIso8601String().substring(0, 10);
+  // Una línea pequeña de la lista de requisitos:
+  // palomita verde si se cumple, cruz roja si todavía no.
+  Widget _requisito(bool cumple, String texto) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Icon(
+            cumple ? Icons.check_circle : Icons.cancel,
+            size: 18,
+            color: cumple ? Colors.green : Colors.red,
+          ),
+          const SizedBox(width: 8),
+          Text(texto),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Paso de datos entre pantallas: llega el id por argumento
+    // El hábito llega desde la pantalla anterior por su id
     final id = ModalRoute.of(context)!.settings.arguments as String;
     final prov = context.watch<HabitProvider>();
-    Habit? habito;
-    for (final candidato in prov.habitos) {
-      if (candidato.id == id) {
-        habito = candidato;
-        break;
-      }
-    }
-    if (habito == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Hábito')),
-        body: const Center(child: Text('Hábito no encontrado')),
-      );
-    }
-    final completadoHoy = habito.fechasCompletadas.contains(_hoy());
     final radio = context.watch<SettingsProvider>().radio.toDouble();
-    // Los hábitos ligados a un lugar solo se completan estando cerca
-    final requiereCheckIn =
+    final habito = prov.habitos.firstWhere((h) => h.id == id);
+
+    // Datos para decidir qué mostrar y si se puede completar
+    final pideUbicacion =
         habito.alAireLibre && habito.lat != null && habito.lng != null;
+    final hayFoto = prov.tieneFotoHoy(habito);
     final puedeCompletar =
-        !completadoHoy && (!requiereCheckIn || _dentroDeRango);
+        prov.motivoBloqueo(habito, dentroDeRango: _dentroDeRango) == null;
 
     return Scaffold(
       appBar: AppBar(title: Text(habito.nombre)),
@@ -55,7 +61,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Portada con Stack: última foto (o ícono) + datos encima
+            // Portada: la última foto de fondo (o el ícono si no hay fotos)
             SizedBox(
               height: 220,
               width: double.infinity,
@@ -66,14 +72,12 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                       ? Image.file(File(habito.fotos.last), fit: BoxFit.cover)
                       : Container(
                           color: Theme.of(context).colorScheme.primaryContainer,
-                          child: Icon(
-                            // El código de icono se obtiene de los datos guardados.
-                            // ignore: non_const_argument_for_const_parameter
-                            IconData(habito.icono, fontFamily: 'MaterialIcons'),
-                            size: 100,
+                          child: const Icon(
+                            Icons.local_fire_department,
+                            size: 80,
                           ),
                         ),
-                  // Degradado para que el texto se lea sobre cualquier foto
+                  // Sombra suave abajo para que el texto blanco se lea bien
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -83,10 +87,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                       ),
                     ),
                   ),
+                  // Nombre del hábito y su racha encima de la portada
                   Positioned(
                     left: 16,
-                    bottom: 16,
                     right: 16,
+                    bottom: 16,
                     child: Row(
                       children: [
                         Expanded(
@@ -100,10 +105,11 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                           ),
                         ),
                         Chip(
-                          avatar: const Icon(Icons.check_circle, size: 18),
-                          label: Text(
-                            '${habito.fechasCompletadas.length} días',
+                          avatar: const Icon(
+                            Icons.local_fire_department,
+                            size: 18,
                           ),
+                          label: Text('Racha: ${habito.currentStreak}'),
                         ),
                       ],
                     ),
@@ -112,8 +118,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
               ),
             ),
 
-            // Check-in por ubicación (solo hábitos al aire libre con lugar)
-            if (requiereCheckIn)
+            // Panel de ubicación: solo si el hábito es al aire libre
+            if (pideUbicacion)
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: LocationPanel(
@@ -121,15 +127,14 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                   destinoLng: habito.lng,
                   direccionDestino: habito.direccionDestino,
                   radioPermitidoMetros: radio,
+                  // El panel nos avisa cuando la persona entra o sale del lugar
                   onDentroDeRangoChanged: (dentro) {
-                    if (mounted && dentro != _dentroDeRango) {
-                      setState(() => _dentroDeRango = dentro);
-                    }
+                    if (mounted) setState(() => _dentroDeRango = dentro);
                   },
                 ),
               ),
 
-            // Galería de evidencia
+            // Título de la galería y botón para agregar foto
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
@@ -148,7 +153,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                     label: const Text('Agregar foto'),
                     onPressed: () async {
                       final ok = await prov.obtenerFoto(id);
-                      if (!ok && context.mounted) {
+                      if (!mounted) return;
+                      if (!ok) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('No se agregó ninguna foto'),
@@ -160,6 +166,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                 ],
               ),
             ),
+
+            // Galería con las fotos del hábito
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: PhotoGrid(fotos: habito.fotos),
@@ -169,31 +177,47 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
         ),
       ),
 
-      // Botón Completar abajo, fácil de alcanzar con el pulgar
+      // Parte de abajo: lista de requisitos y botón Completar
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            height: 52,
-            child: FilledButton.icon(
-              icon: Icon(
-                completadoHoy
-                    ? Icons.check
-                    : puedeCompletar
-                    ? Icons.done_all
-                    : Icons.location_off,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Lo que falta por hacer (se oculta si ya se completó hoy)
+              if (!habito.doneToday) ...[
+                _requisito(hayFoto, 'Foto de hoy subida'),
+                if (pideUbicacion)
+                  _requisito(_dentroDeRango, 'Estás en el lugar del hábito'),
+                const SizedBox(height: 12),
+              ],
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: FilledButton.icon(
+                  icon: Icon(habito.doneToday ? Icons.check : Icons.done_all),
+                  label: Text(
+                    habito.doneToday ? 'Completado hoy' : 'Completar',
+                  ),
+                  // El botón se apaga si ya se completó o si falta algo
+                  onPressed: (habito.doneToday || !puedeCompletar)
+                      ? null
+                      : () async {
+                          final mensaje = await prov.completar(
+                            habito.id,
+                            dentroDeRango: _dentroDeRango,
+                          );
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(mensaje ?? '¡Hábito completado!'),
+                            ),
+                          );
+                        },
+                ),
               ),
-              label: Text(
-                completadoHoy
-                    ? 'Completado hoy'
-                    : puedeCompletar
-                    ? 'Completar'
-                    : 'Acércate al lugar para completar',
-              ),
-              onPressed: puedeCompletar
-                  ? () => prov.completar(habito!.id)
-                  : null,
-            ),
+            ],
           ),
         ),
       ),
